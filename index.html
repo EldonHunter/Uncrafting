@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uncrafting — Datapack</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #141418;
+    --border: #2a2a35;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --text: #d4cfc5;
+    --muted: #6e6a62;
+    --diamond: #7dd6e8;
+    --iron: #b0b8c4;
+    --netherite: #7c5c8a;
+    --wood: #a07850;
+    --leather: #c48040;
+    --stone: #8a8a8a;
+    --copper: #c06840;
+    --redstone: #c83030;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    text-align: center;
+    padding: 80px 40px 60px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(201,168,76,0.12) 0%, transparent 70%),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.02) 40px),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.02) 40px);
+    pointer-events: none;
+  }
+
+  .pack-badge {
+    display: inline-block;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 4px 18px;
+    margin-bottom: 28px;
+    opacity: 0.8;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 0 60px rgba(201,168,76,0.3);
+    margin-bottom: 8px;
+  }
+
+  h1 span { color: var(--gold); }
+
+  .subtitle {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 32px;
+  }
+
+  .version {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+  }
+
+  /* ── LANG TOGGLE ── */
+  .lang-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin: 40px auto 0;
+    width: fit-content;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .lang-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    padding: 10px 32px;
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .lang-btn.active {
+    background: var(--gold);
+    color: #000;
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+  /* ── DESCRIPTION ── */
+  .description-block {
+    padding: 64px 0 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .description-text {
+    font-size: 18px;
+    line-height: 1.85;
+    color: #c4bfb5;
+    max-width: 680px;
+  }
+
+  .description-text p + p { margin-top: 1em; }
+
+  /* ── CATEGORIES ── */
+  .categories { padding: 48px 0 80px; }
+
+  .category {
+    margin-bottom: 48px;
+    border-left: 2px solid var(--border);
+    padding-left: 28px;
+    transition: border-color 0.3s;
+  }
+
+  .category:hover { border-left-color: var(--gold); }
+
+  .cat-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .cat-title {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+  }
+
+  .cat-count {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+
+  /* material color accents */
+  .cat-wood .cat-title { color: var(--wood); }
+  .cat-stone .cat-title { color: var(--stone); }
+  .cat-iron .cat-title { color: var(--iron); }
+  .cat-copper .cat-title { color: var(--copper); }
+  .cat-gold .cat-title { color: var(--gold-light); }
+  .cat-diamond .cat-title { color: var(--diamond); }
+  .cat-netherite .cat-title { color: var(--netherite); }
+  .cat-leather .cat-title { color: var(--leather); }
+  .cat-redstone .cat-title { color: var(--redstone); }
+  .cat-misc .cat-title { color: var(--gold); }
+
+  .item-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+
+  .item-tag {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .item-tag::after {
+    content: '·';
+    color: var(--border);
+    font-style: normal;
+    font-size: 18px;
+  }
+
+  .item-tag:last-child::after { display: none; }
+
+  .item-result {
+    font-style: normal;
+    font-size: 12px;
+    color: var(--border);
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+  }
+
+  /* ── LANG VISIBILITY ── */
+  [data-lang] { display: none; }
+  body.lang-en [data-lang="en"] { display: block; }
+  body.lang-fr [data-lang="fr"] { display: block; }
+  .item-grid [data-lang] { display: none; }
+  body.lang-en .item-grid [data-lang="en"] { display: flex; }
+  body.lang-fr .item-grid [data-lang="fr"] { display: flex; }
+
+  /* inline spans in descriptions */
+  span[data-lang] { display: none; }
+  body.lang-en span[data-lang="en"] { display: inline; }
+  body.lang-fr span[data-lang="fr"] { display: inline; }
+
+</style>
+</head>
+<body class="lang-en">
+
+<header>
+  <div class="pack-badge">MINECRAFT DATAPACK</div>
+  <h1>UN<span>CRAFT</span>ING</h1>
+  <p class="subtitle">
+    <span data-lang="en">Deconstruct your gear. Reclaim your materials.</span>
+    <span data-lang="fr">Déconstruisez votre équipement. Récupérez vos matériaux.</span>
+  </p>
+  <div class="version">VERSION 1.03 &nbsp;·&nbsp; PACK FORMAT 71–102</div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('fr')">FR</button>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- DESCRIPTION -->
+  <section class="description-block">
+    <div class="section-label">About</div>
+
+    <div class="description-text" data-lang="en">
+      <p>Ever found yourself swimming in unused iron swords or stacks of leather boots you'll never wear? <strong>Uncrafting</strong> is a lightweight datapack that lets you break down your equipment directly in the crafting table — no mods, no special blocks, no commands.</p>
+      <p>Simply place any supported item in the crafting grid and recover the raw materials it was made from. Weapons, tools, armor, redstone components, and miscellaneous items can all be deconstructed. It's the recycling system Minecraft always needed.</p>
+      <p>Compatible with vanilla Minecraft. Drop it in your datapack folder and play.</p>
+    </div>
+
+    <div class="description-text" data-lang="fr">
+      <p>Vous vous retrouvez avec des dizaines d'épées en fer inutilisées ou des piles de bottes en cuir qui prennent la poussière ? <strong>Uncrafting</strong> est un datapack léger qui vous permet de décomposer votre équipement directement dans la table de craft — sans mod, sans bloc spécial, sans commande.</p>
+      <p>Placez simplement un objet supporté dans la grille de craft pour récupérer les matériaux dont il est fait. Armes, outils, armures, composants redstone et objets divers peuvent tous être déconstruits. Le système de recyclage que Minecraft attendait depuis longtemps.</p>
+      <p>Compatible avec Minecraft vanilla. Glissez-le dans votre dossier datapack et jouez.</p>
+    </div>
+  </section>
+
+  <!-- ITEM LIST -->
+  <section class="categories">
+    <div class="section-label">
+      <span data-lang="en">Complete Item List</span>
+      <span data-lang="fr">Liste complète des objets</span>
+    </div>
+
+    <!-- WOOD -->
+    <div class="category cat-wood">
+      <div class="cat-header">
+        <span class="cat-title">🪵 <span data-lang="en">Wooden Tools</span><span data-lang="fr">Outils en Bois</span></span>
+        <span class="cat-count">6 items → oak planks</span>
+      </div>
+      <div class="item-grid">
+        <div data-lang="en" class="item-tag">Wooden Sword <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Wooden Axe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Wooden Pickaxe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Wooden Hoe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Wooden Shovel <span class="item-result">×1</span></div>
+        <div data-lang="en" class="item-tag">Wooden Spear <span class="item-result">×1</span></div>
+        <div data-lang="fr" class="item-tag">Épée en bois <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Hache en bois <span class="item-result">×3</span></div>
+        <div data-lang="fr" class="item-tag">Pioche en bois <span class="item-result">×3</span></div>
+        <div data-lang="fr" class="item-tag">Houe en bois <span class="item-result">×3</span></div>
+        <div data-lang="fr" class="item-tag">Pelle en bois <span class="item-result">×1</span></div>
+        <div data-lang="fr" class="item-tag">Lance en bois <span class="item-result">×1</span></div>
+      </div>
+    </div>
+
+    <!-- STONE -->
+    <div class="category cat-stone">
+      <div class="cat-header">
+        <span class="cat-title">🪨 <span data-lang="en">Stone Tools</span><span data-lang="fr">Outils en Pierre</span></span>
+        <span class="cat-count">5 items → cobblestone</span>
+      </div>
+      <div class="item-grid">
+        <div data-lang="en" class="item-tag">Stone Sword <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Stone Axe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Stone Pickaxe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Stone Hoe <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Stone Shovel <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Épée en pierre <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Hache en pierre <span class="item-result">×3</span></div>
+        <div data-lang="fr" class="item-tag">Pioche en pierre <span class="item-result">×3</span></div>
+        <div data-lang="fr" class="item-tag">Houe en pierre <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Pelle en pierre <span class="item-result">×2</span></div>
+      </div>
+    </div>
+
+    <!-- IRON -->
+    <div class="category cat-iron">
+      <div class="cat-header">
+        <span class="cat-title">⚙️ <span data-lang="en">Iron Tools & Armor</span><span data-lang="fr">Outils & Armure en Fer</span></span>
+        <span class="cat-count">10 items → iron ingot</span>
+      </div>
+      <div class="item-grid">
+        <div data-lang="en" class="item-tag">Iron Sword <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Iron Axe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Iron Pickaxe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Iron Hoe <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Iron Shovel <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Iron Spear <span class="item-result">×1</span></div>
+        <div data-lang="en" class="item-tag">Iron Helmet <span class="item-result">×5</span></div>
+        <div data-lang="en" class="item-tag">Iron Chestplate <span class="item-result">×8</span></div>
+        <div data-lang="en" class="item-tag">Iron Leggings <span class="item-result">×7</span></div>
+        <div data-lang="en" class="item-tag">Iron Boots <span class="item-result">×4</span></div>
+        <div data-lang="fr" class="item-tag">Épée en fer <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Hache en fer <span class="item-result">×3</span></div>
+        <div data-lang="fr" class="item-tag">Pioche en fer <span class="item-result">×3</span></div>
+        <div data-lang="fr" class="item-tag">Houe en fer <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Pelle en fer <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Lance en fer <span class="item-result">×1</span></div>
+        <div data-lang="fr" class="item-tag">Casque en fer <span class="item-result">×5</span></div>
+        <div data-lang="fr" class="item-tag">Plastron en fer <span class="item-result">×8</span></div>
+        <div data-lang="fr" class="item-tag">Jambières en fer <span class="item-result">×7</span></div>
+        <div data-lang="fr" class="item-tag">Bottes en fer <span class="item-result">×4</span></div>
+      </div>
+    </div>
+
+    <!-- COPPER -->
+    <div class="category cat-copper">
+      <div class="cat-header">
+        <span class="cat-title">🟤 <span data-lang="en">Copper Tools & Armor</span><span data-lang="fr">Outils & Armure en Cuivre</span></span>
+        <span class="cat-count">10 items → copper ingot</span>
+      </div>
+      <div class="item-grid">
+        <div data-lang="en" class="item-tag">Copper Sword <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Copper Axe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Copper Pickaxe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Copper Hoe <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Copper Shovel <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Copper Spear <span class="item-result">×1</span></div>
+        <div data-lang="en" class="item-tag">Copper Helmet <span class="item-result">×5</span></div>
+        <div data-lang="en" class="item-tag">Copper Chestplate <span class="item-result">×8</span></div>
+        <div data-lang="en" class="item-tag">Copper Leggings <span class="item-result">×7</span></div>
+        <div data-lang="en" class="item-tag">Copper Boots <span class="item-result">×4</span></div>
+        <div data-lang="fr" class="item-tag">Épée en cuivre <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Hache en cuivre <span class="item-result">×3</span></div>
+        <div data-lang="fr" class="item-tag">Pioche en cuivre <span class="item-result">×3</span></div>
+        <div data-lang="fr" class="item-tag">Houe en cuivre <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Pelle en cuivre <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Lance en cuivre <span class="item-result">×1</span></div>
+        <div data-lang="fr" class="item-tag">Casque en cuivre <span class="item-result">×5</span></div>
+        <div data-lang="fr" class="item-tag">Plastron en cuivre <span class="item-result">×8</span></div>
+        <div data-lang="fr" class="item-tag">Jambières en cuivre <span class="item-result">×7</span></div>
+        <div data-lang="fr" class="item-tag">Bottes en cuivre <span class="item-result">×4</span></div>
+      </div>
+    </div>
+
+    <!-- GOLD -->
+    <div class="category cat-gold">
+      <div class="cat-header">
+        <span class="cat-title">✨ <span data-lang="en">Golden Tools & Armor</span><span data-lang="fr">Outils & Armure en Or</span></span>
+        <span class="cat-count">10 items → gold ingot</span>
+      </div>
+      <div class="item-grid">
+        <div data-lang="en" class="item-tag">Golden Sword <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Golden Axe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Golden Pickaxe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Golden Hoe <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Golden Shovel <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Golden Spear <span class="item-result">×1</span></div>
+        <div data-lang="en" class="item-tag">Golden Helmet <span class="item-result">×5</span></div>
+        <div data-lang="en" class="item-tag">Golden Chestplate <span class="item-result">×8</span></div>
+        <div data-lang="en" class="item-tag">Golden Leggings <span class="item-result">×7</span></div>
+        <div data-lang="en" class="item-tag">Golden Boots <span class="item-result">×4</span></div>
+        <div data-lang="fr" class="item-tag">Épée en or <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Hache en or <span class="item-result">×3</span></div>
+        <div data-lang="fr" class="item-tag">Pioche en or <span class="item-result">×3</span></div>
+        <div data-lang="fr" class="item-tag">Houe en or <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Pelle en or <span class="item-result">×2</span></div>
+        <div data-lang="fr" class="item-tag">Lance en or <span class="item-result">×1</span></div>
+        <div data-lang="fr" class="item-tag">Casque en or <span class="item-result">×5</span></div>
+        <div data-lang="fr" class="item-tag">Plastron en or <span class="item-result">×8</span></div>
+        <div data-lang="fr" class="item-tag">Jambières en or <span class="item-result">×7</span></div>
+        <div data-lang="fr" class="item-tag">Bottes en or <span class="item-result">×4</span></div>
+      </div>
+    </div>
+
+    <!-- DIAMOND -->
+    <div class="category cat-diamond">
+      <div class="cat-header">
+        <span class="cat-title">💎 <span data-lang="en">Diamond Tools & Armor</span><span data-lang="fr">Outils & Armure en Diamant</span></span>
+        <span class="cat-count">10 items → diamond</span>
+      </div>
+      <div class="item-grid">
+        <div data-lang="en" class="item-tag">Diamond Sword <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Diamond Axe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Diamond Pickaxe <span class="item-result">×3</span></div>
+        <div data-lang="en" class="item-tag">Diamond Hoe <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Diamond Shovel <span class="item-result">×2</span></div>
+        <div data-lang="en" class="item-tag">Diamond Spear <span class="item-result">×1</span></div>
+        <div data-lang="en" class="item-tag">Diamond Helmet <span class="item-result">×5</span></div>
+        <div data-lang="en" class="item-tag">Diamond Chestplate <span class="item-result">×8</span></div>
+        <div data-lang="en" class="item-tag">Diamond Leggings <span class="item-result">×7</span></div>
+        <div data-lang="en" class="item-tag">Diamond Boots <span class="item-result">×4</span></div>
+        <div data-lang="fr" class="item-tag">Épée en diamant <span class="item-result">×2</span></div>
+        <div data-lang="fr" clas
